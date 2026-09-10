@@ -33,6 +33,11 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: podinfo-prod
+  # HPA writes spec.replicas at runtime — don't let selfHeal fight it.
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jsonPointers: [/spec/replicas]
   syncPolicy:
     automated: {prune: true, selfHeal: true}
     syncOptions: [CreateNamespace=true]
