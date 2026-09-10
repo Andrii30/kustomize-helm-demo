@@ -1,0 +1,21 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# No namespace here — base is environment-agnostic. Overlays set it.
+
+# --- Helm chart rendered BY kustomize (requires: kustomize build --enable-helm) ---
+# kustomize runs `helm template podinfo <repo> --values base/values.yaml`
+# internally, then treats the output as plain manifests to transform.
+helmCharts:
+  - name: podinfo
+    repo: https://stefanprodan.github.io/podinfo
+    version: 6.15.0
+    releaseName: podinfo
+    valuesFile: values.yaml
+    skipTests: true              # drop the chart's helm-test Pods
+
+# --- Plain kustomize transformers, applied ON TOP of the rendered helm output ---
+labels:
+  - pairs:
+      app.kubernetes.io/part-of: kustomize-helm-demo
+    includeSelectors: false

@@ -1,0 +1,28 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# base/ renders the podinfo helm chart with base values. The overlay does NOT
+# re-run helm — it patches the manifests base produced.
+resources:
+  - namespace.yaml
+  - ../../base
+
+namespace: podinfo-staging
+
+# Pure-kustomize patches applied on top of the helm output.
+patches:
+  # 1 replica in staging (base already is 1, shown for clarity)
+  - target: {kind: Deployment, name: podinfo}
+    patch: |
+      - op: replace
+        path: /spec/replicas
+        value: 1
+  # green UI + staging message — patch the env vars helm rendered
+  - target: {kind: Deployment, name: podinfo}
+    patch: |
+      - op: replace
+        path: /spec/template/spec/containers/0/env/0/value
+        value: "environment: staging"
+      - op: replace
+        path: /spec/template/spec/containers/0/env/1/value
+        value: "#2e7d32"

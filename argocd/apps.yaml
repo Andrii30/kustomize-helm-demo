@@ -1,0 +1,38 @@
+# Two Argo CD Applications, one per overlay. Argo CD detects the kustomization,
+# runs `kustomize build --enable-helm` (enabled cluster-wide in argocd-cm),
+# and applies the result — same output you get locally.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: podinfo-staging
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Andrii30/kustomize-helm-demo.git
+    targetRevision: main
+    path: overlays/staging
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: podinfo-staging
+  syncPolicy:
+    automated: {prune: true, selfHeal: true}
+    syncOptions: [CreateNamespace=true]
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: podinfo-prod
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Andrii30/kustomize-helm-demo.git
+    targetRevision: main
+    path: overlays/prod
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: podinfo-prod
+  syncPolicy:
+    automated: {prune: true, selfHeal: true}
+    syncOptions: [CreateNamespace=true]

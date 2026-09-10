@@ -1,0 +1,8 @@
+# Base Helm values for podinfo. Overlays override selected keys.
+replicaCount: 1
+ui:
+  color: "#34577c"        # default blue
+  message: "environment: base"
+resources:
+  requests: {cpu: 10m, memory: 32Mi}
+  limits:   {cpu: 100m, memory: 64Mi}
