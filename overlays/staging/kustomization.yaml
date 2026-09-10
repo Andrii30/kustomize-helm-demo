@@ -25,4 +25,4 @@ patches:
         value: "environment: staging"
       - op: replace
         path: /spec/template/spec/containers/0/env/1/value
-        value: "#2e7d32"
+        value: "#6a1b9a"
